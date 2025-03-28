@@ -5,10 +5,10 @@
 
 目前包括
 
-1:文件头(filebegin\filebeginFZA.cpp)
+1:文件头(文件头\FZAversion.cpp)
 
 2:组合数
 
   1): 基本板子(组合数\comb.cpp)
   
-  2): 卢卡斯定理及妙妙小结论(组合数\lucas.cpp)
+  2): 卢卡斯定理及妙妙小结论(组合数\lucas.pdf)
