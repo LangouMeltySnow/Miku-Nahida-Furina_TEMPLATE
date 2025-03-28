@@ -1,0 +1,110 @@
+/*查找区间第k小*/
+#include <bits/stdc++.h>
+#define ll long long
+#define PII pair<ll, ll>
+using namespace std;
+const ll inf = 1e18+9;
+
+inline void rd(ll &x){x=0;short f=1;char c=getchar();while((c<'0'||c>'9')&&c!='-') c=getchar();if(c=='-') f=-1,c=getchar();while(c>='0'&&c<='9') x=x*10+c-'0',c=getchar();x*=f;}
+inline void pt(ll x){if(x<0) putchar('-'),x=-x;if(x>9) pt(x/10);putchar(x%10+'0');}
+
+void printvec(vector<ll> vec) { for (auto it = vec.begin(); it != vec.end(); ++it) { cout << *it << " ";} cout << endl;}
+void print2dvec(const vector<vector<ll>>& vec) { for (const auto& row : vec) { for (const auto& element : row) { cout << element << " ";}cout << endl;}}
+void printPII(vector<PII> vec) { for (auto it = vec.begin(); it != vec.end(); ++it) { cout << (*it).first << "->" << (*it).second << " ";} cout << endl;}
+void printPIII(vector<pair<ll, PII>> vec) { for (auto it = vec.begin(); it != vec.end(); ++it) { cout << (*it).second.first << "/" << (*it).second.second << "\n";}}
+void printvecmap(const map<ll, vector<ll>>& g) {for (const auto& [key, value] : g) { cout << "key: " << key << " -> ";for (const auto& v : value) {cout << v << " ";}cout << endl;}}
+void printmap(const map<ll, ll>& g) { for (const auto& [key, value] : g) { cout << "key: " << key << " -> " << value << " ";}cout << endl;}
+const int MAXN = 200005;
+const int MAXM = 22;
+
+struct Info {
+    Info* l = nullptr;
+    Info* r = nullptr;
+    ll sum = 0;
+};
+Info* ptrs = new Info[MAXN*MAXM];
+ll tot = 0;
+class SegTree {
+    public:
+    ll n;
+    vector<Info*> roots;
+    explicit SegTree(ll n_): n(n_) {roots.assign(n_+1,nullptr);}
+    void bulidroot(Info* &x, ll l, ll r) {
+        tot++;
+        x = ptrs+tot;
+        if (l == r) return;
+        ll m = (l+r)>>1;
+        bulidroot(x->l, l, m);
+        bulidroot(x->r, m+1, r);
+    }
+    void bulidroot() {
+        bulidroot(roots[0],1,n);
+    }
+
+    void init(Info* &cur, Info* pre, ll l, ll r, ll v) {
+        cur = ptrs + (++tot);
+        *cur = *pre;
+        cur->sum++;
+        if (l == r) return;
+        ll m = (l+r)>>1;
+        if (v <= m) init(cur->l, pre->l, l, m,v);
+        else init(cur->r, pre->r, m+1, r, v);
+    }
+  
+    template<typename Array>
+    void init(Array &data) {
+        bulidroot();
+        for (int i = 1; i <= n; i++) {
+            init(roots[i],roots[i-1], 1, n,data[i-1]);
+        }
+    }  
+    ll ask(Info* cur, Info* pre, ll l, ll r, ll v) {
+        if (l == r) return l;
+        ll m = (l+r)>>1;
+        ll s = cur->l->sum - pre->l->sum;
+        if (s >= v) return ask(cur->l, pre->l, l, m, v);
+        else return ask(cur->r, pre->r, m+1, r, v-s);
+    }
+    ll ask(ll ql, ll qr,ll v) {
+        return ask(roots[qr], roots[ql-1], 1, n, v);
+    }
+    
+};
+void MIKUUUUUU() {
+    int n, q;
+    cin >> n >> q;
+    vector<ll> a(n);
+    vector<ll> csa(n);
+    vector<ll> sorta(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        sorta[i] = a[i];
+    }
+    sort(sorta.begin(),sorta.end());
+    // auto inisa = sorta;
+    sorta.erase(unique(sorta.begin(),sorta.end()), sorta.end());
+    for (int i = 0; i < n; i++) {
+        csa[i] = lower_bound(sorta.begin(),sorta.end(),a[i]) - sorta.begin()+1;
+    }
+    // printvec(inisa);
+    // printvec(csa);
+    SegTree seg(n);
+    seg.init(csa);
+    // 处理查询
+    while (q--) {
+        int l, r, c;
+        cin >> l >> r >> c;
+        ll ind = seg.ask(l,r,c) - 1;
+        // cout << "IND " << ind <<" ";
+        ll miku = sorta[ind];
+        cout << miku <<endl;
+    }
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    // int tt; cin >> tt; while (tt--)
+        MIKUUUUUU();
+    return 0;
+} 
