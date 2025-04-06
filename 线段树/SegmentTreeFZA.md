@@ -80,7 +80,7 @@ class SegmentTree{
     }
 
     void push_change_tag(ll p, ll d){
-        tag[p] += d;
+        tag[p] = d;
         tree[p].data = (tree[p].r - tree[p].l + 1) * d;
     }
     
